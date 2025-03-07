@@ -4,7 +4,12 @@ const BookingSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     phone: { type: String, required: true },
-    serviceType: [{ type: String, required: true }],
+    serviceType: [
+      {
+        name: { type: String, required: true },
+        price: { type: Number, required: true },
+      },
+    ],
     appointmentDate: { type: Date, required: true },
     appointmentTime: { type: String, required: true },
     address: {

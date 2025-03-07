@@ -13,15 +13,42 @@ export async function POST(req) {
       body.appointmentDate = new Date(body.appointmentDate);
     }
 
-    // Calculate Total Cost from service prices
-    body.totalCost = body.serviceType.reduce((sum, service) => sum + service.price, 0);
+    // ✅ Store full serviceType array with name & price
+    if (body.serviceType && body.serviceType.length > 0) {
+      body.totalCost = body.serviceType.reduce((sum, service) => sum + (service.price || 0), 0);
+    } else {
+      return NextResponse.json(
+        { success: false, message: "Please select at least one service." },
+        { status: 400 }
+      );
+    }
 
-    const newBooking = new Booking(body);
+    // If total cost is still 0, return an error
+    if (body.totalCost === 0) {
+      return NextResponse.json(
+        { success: false, message: "Invalid service selection. Total cost cannot be zero." },
+        { status: 400 }
+      );
+    }
+
+    // ✅ Save the full serviceType array in MongoDB
+    const newBooking = new Booking({
+      ...body, // Keep all data as it is
+      serviceType: body.serviceType, // Store {name, price} properly
+    });
+
     await newBooking.save();
 
-    return NextResponse.json({ message: "Booking Successful!", totalCost: body.totalCost }, { status: 201 });
+    return NextResponse.json(
+      { message: "Booking Successful!", totalCost: body.totalCost },
+      { status: 201 }
+    );
   } catch (error) {
-    return NextResponse.json({ success: false, message: "Error booking service", error }, { status: 500 });
+    console.error("❌ Booking Error:", error);
+    return NextResponse.json(
+      { success: false, message: "Error booking service", error },
+      { status: 500 }
+    );
   }
 }
 
