@@ -3,11 +3,20 @@
 import { useState } from "react";
 
 export default function BookingPage() {
+  const serviceList = [
+    { name: "AC Repair", price: 500 },
+    { name: "Refrigerator Repair", price: 700 },
+    { name: "Washing Machine Repair", price: 600 },
+    { name: "TV & Appliances", price: 400 },
+    { name: "Plumbing", price: 350 },
+    { name: "Electrical Repair", price: 450 },
+  ];
+
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
     email: "",
-    serviceType: [], // Multiple services will be stored in an array
+    serviceType: [],
     appointmentDate: "",
     appointmentTime: "",
     problemDescription: "",
@@ -19,6 +28,7 @@ export default function BookingPage() {
       pincode: "",
     },
     paymentMethod: "Cash on Service",
+    totalCost: 0, // Automatically calculated
   });
 
   const [message, setMessage] = useState("");
@@ -27,13 +37,30 @@ export default function BookingPage() {
     const { name, value, type, checked } = e.target;
 
     if (name === "serviceType") {
-      // Handle multiple services selection using checkboxes
-      setFormData((prevData) => ({
-        ...prevData,
-        serviceType: checked
-          ? [...prevData.serviceType, value] // Add service if checked
-          : prevData.serviceType.filter((service) => service !== value), // Remove service if unchecked
-      }));
+      setFormData((prevData) => {
+        const selectedService = serviceList.find((s) => s.name === value);
+
+        let updatedServices;
+        if (checked) {
+          updatedServices = [...prevData.serviceType, selectedService]; // Store object {name, price}
+        } else {
+          updatedServices = prevData.serviceType.filter(
+            (s) => s.name !== value
+          );
+        }
+
+        // Calculate total cost
+        const totalCost = updatedServices.reduce(
+          (total, service) => total + service.price,
+          0
+        );
+
+        return {
+          ...prevData,
+          serviceType: updatedServices,
+          totalCost,
+        };
+      });
     } else if (["houseNumber", "street", "pincode"].includes(name)) {
       setFormData({
         ...formData,
@@ -53,9 +80,25 @@ export default function BookingPage() {
     // Convert Date to Proper Format
     const formattedDate = new Date(formData.appointmentDate).toISOString();
 
+    // Convert serviceType from array of names to array of { name, price } objects
+    const selectedServices = formData.serviceType
+      .map((serviceName) => {
+        const service = serviceList.find((s) => s.name === serviceName);
+        return service ? { name: service.name, price: service.price } : null;
+      })
+      .filter(Boolean); // Remove null values
+
+    // Ensure totalCost is correctly calculated
+    const totalCost = selectedServices.reduce(
+      (sum, service) => sum + service.price,
+      0
+    );
+
     const finalData = {
       ...formData,
+      serviceType: selectedServices,
       appointmentDate: formattedDate,
+      totalCost,
     };
 
     try {
@@ -91,7 +134,9 @@ export default function BookingPage() {
         {/* Personal Details */}
         <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
           <div className="space-y-1">
-            <label className="text-xs sm:text-sm font-medium text-gray-600">Full Name</label>
+            <label className="text-xs sm:text-sm font-medium text-gray-600">
+              Full Name
+            </label>
             <input
               type="text"
               name="name"
@@ -103,7 +148,9 @@ export default function BookingPage() {
           </div>
 
           <div className="space-y-1">
-            <label className="text-xs sm:text-sm font-medium text-gray-600">Phone Number</label>
+            <label className="text-xs sm:text-sm font-medium text-gray-600">
+              Phone Number
+            </label>
             <input
               type="text"
               name="phone"
@@ -115,30 +162,46 @@ export default function BookingPage() {
           </div>
         </div>
 
-        {/* Multi-Select Service Type */}
+        {/* Multi-Select Service Type with Price */}
         <div className="space-y-1">
-          <label className="text-xs sm:text-sm font-medium text-gray-600">Select Services</label>
+          <label className="text-xs sm:text-sm font-medium text-gray-600">
+            Select Services
+          </label>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-            {["AC Repair", "Refrigerator Repair", "Washing Machine Repair", "TV & Appliances", "Plumbing", "Electrical Repair"].map((service) => (
-              <label key={service} className="flex items-center space-x-2 text-sm">
+            {serviceList.map((service) => (
+              <label
+                key={service.name}
+                className="flex items-center space-x-2 text-sm"
+              >
                 <input
                   type="checkbox"
                   name="serviceType"
-                  value={service}
-                  checked={formData.serviceType.includes(service)}
+                  value={service.name}
+                  checked={formData.serviceType.some(
+                    (s) => s.name === service.name
+                  )}
                   onChange={handleChange}
                   className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
-                <span>{service}</span>
+                <span>
+                  {service.name} (₹{service.price})
+                </span>
               </label>
             ))}
           </div>
         </div>
 
+        {/* Display Total Cost */}
+        <div className="text-lg font-semibold text-gray-700">
+          Total Cost: ₹{formData.totalCost}
+        </div>
+
         {/* Date & Time */}
         <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
           <div className="space-y-1">
-            <label className="text-xs sm:text-sm font-medium text-gray-600">Preferred Date</label>
+            <label className="text-xs sm:text-sm font-medium text-gray-600">
+              Preferred Date
+            </label>
             <input
               type="date"
               name="appointmentDate"
@@ -150,7 +213,9 @@ export default function BookingPage() {
           </div>
 
           <div className="space-y-1">
-            <label className="text-xs sm:text-sm font-medium text-gray-600">Preferred Time</label>
+            <label className="text-xs sm:text-sm font-medium text-gray-600">
+              Preferred Time
+            </label>
             <input
               type="time"
               name="appointmentTime"
@@ -164,8 +229,10 @@ export default function BookingPage() {
 
         {/* Address */}
         <div className="space-y-3 sm:space-y-4 p-3 sm:p-4 bg-gray-50 rounded-lg sm:rounded-xl">
-          <h3 className="text-sm sm:text-base font-semibold text-gray-700">Service Address</h3>
-          
+          <h3 className="text-sm sm:text-base font-semibold text-gray-700">
+            Service Address
+          </h3>
+
           <div className="grid sm:grid-cols-2 gap-2 sm:gap-3">
             <input
               type="text"
@@ -212,9 +279,14 @@ export default function BookingPage() {
           Confirm Booking
         </button>
 
-        {/* Status Message */}
         {message && (
-          <div className={`mt-4 p-3 rounded-lg text-center ${message.includes("wrong") ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"}`}>
+          <div
+            className={`mt-4 p-3 rounded-lg text-center ${
+              message.includes("wrong")
+                ? "bg-red-100 text-red-700"
+                : "bg-green-100 text-green-700"
+            }`}
+          >
             {message}
           </div>
         )}

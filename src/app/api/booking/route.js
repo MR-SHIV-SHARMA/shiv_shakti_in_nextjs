@@ -8,20 +8,18 @@ export async function POST(req) {
     await connectDB();
     let body = await req.json();
 
-    // Ensure serviceType is always an array
-    if (body.serviceType && !Array.isArray(body.serviceType)) {
-      body.serviceType = [body.serviceType]; // Convert single service to array
-    }
-
-    // Fix appointmentDate format before saving
+    // Convert appointmentDate to Date format
     if (body.appointmentDate) {
       body.appointmentDate = new Date(body.appointmentDate);
     }
 
+    // Calculate Total Cost from service prices
+    body.totalCost = body.serviceType.reduce((sum, service) => sum + service.price, 0);
+
     const newBooking = new Booking(body);
     await newBooking.save();
 
-    return NextResponse.json({ message: "Booking Successful!" }, { status: 201 });
+    return NextResponse.json({ message: "Booking Successful!", totalCost: body.totalCost }, { status: 201 });
   } catch (error) {
     return NextResponse.json({ success: false, message: "Error booking service", error }, { status: 500 });
   }
