@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 
 export default function Admin() {
@@ -49,8 +48,6 @@ export default function Admin() {
 
   // Function to delete a booking
   const deleteBooking = async (id) => {
-    if (!confirm("Are you sure you want to delete this booking?")) return;
-
     try {
       const res = await fetch("/api/booking", {
         method: "DELETE",
@@ -139,12 +136,11 @@ export default function Admin() {
                     <th className="border p-2">Name</th>
                     <th className="border p-2">Phone</th>
                     <th className="border p-2">Service</th>
+                    <th className="border p-2">Price</th>
                     <th className="border p-2">Date</th>
                     <th className="border p-2">Time</th>
                     <th className="border p-2">Address</th>
                     <th className="border p-2">Pincode</th>
-                    <th className="border p-2">Payment</th>
-                    <th className="border p-2">Advance Paid</th>
                     <th className="border p-2">Status</th>
                     <th className="border p-2">Actions</th>
                   </tr>
@@ -152,24 +148,44 @@ export default function Admin() {
                 <tbody>
                   {bookings.map((booking) => (
                     <tr key={booking._id} className="text-center">
-                      <td className="border p-2">{booking.name}</td>
-                      <td className="border p-2">{booking.phone}</td>
-                      <td className="border p-2">{booking.serviceType}</td>
-                      <td className="border p-2">
+                      <td className="border p-2 align-baseline">
+                        {booking.name}
+                      </td>
+                      <td className="border p-2 align-baseline">
+                        {booking.phone}
+                      </td>
+
+                      {/* 🛠 Services (Each in a New Line) */}
+                      <td className="border p-2 align-baseline">
+                        {booking.serviceType.map((service, index) => (
+                          <div key={index}>{service.name}</div>
+                        ))}
+                      </td>
+
+                      {/* 🛠 Prices (Each in a New Line) */}
+                      <td className="border p-2 align-baseline">
+                        {booking.serviceType.map((service, index) => (
+                          <div key={index}>₹{service.price}</div>
+                        ))}
+                      </td>
+
+                      <td className="border p-2 align-baseline">
                         {new Date(booking.appointmentDate).toLocaleDateString()}
                       </td>
-                      <td className="border p-2">{booking.appointmentTime}</td>
-                      <td className="border p-2">
+
+                      <td className="border p-2 align-baseline">
+                        {booking.appointmentTime}
+                      </td>
+                      <td className="border p-2 align-baseline">
                         {booking.address
                           ? `${booking.address.houseNumber}, ${booking.address.street}, ${booking.address.city}`
                           : "N/A"}
                       </td>
-                      <td className="border p-2">
+                      <td className="border p-2 align-baseline">
                         {booking.address?.pincode || "N/A"}
                       </td>
-                      <td className="border p-2">{booking.paymentMethod}</td>
-                      <td className="border p-2">₹{booking.advancePaid}</td>
-                      <td className="border p-2">
+
+                      <td className="border p-2 align-baseline">
                         <select
                           value={booking.status}
                           onChange={(e) =>
@@ -177,12 +193,18 @@ export default function Admin() {
                           }
                           className="border p-1 rounded"
                         >
-                          <option value="Pending">Pending</option>
-                          <option value="Completed">Completed</option>
-                          <option value="Cancelled">Cancelled</option>
+                          <option value="Pending">🕒</option>
+                          <option value="Completed">✅</option>
+                          <option value="Cancelled">❌</option>
                         </select>
                       </td>
-                      <td className="border p-2">
+
+                      {/* 🛠 Total Cost Aligned Center */}
+                      <td className="border p-2 font-bold align-baseline">
+                        ₹{booking.totalCost}
+                      </td>
+
+                      <td className="border p-2 align-baseline">
                         <button
                           onClick={() => deleteBooking(booking._id)}
                           className="text-red-600 hover:text-red-800"
