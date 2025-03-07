@@ -2,6 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { FaPhoneAlt, FaWhatsapp } from "react-icons/fa";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,16 +40,25 @@ export default function RootLayout({ children }) {
         <Navbar />
         {children}
 
-        {/* Floating Phone & WhatsApp Icons */}
+        {/* Phone Icon - Left Side */}
         <div className="fixed bottom-5 left-5 z-50">
-          <a href="tel:+916375477987" className="flex items-center justify-center w-14 h-14 bg-blue-500 text-white rounded-full shadow-lg hover:bg-blue-600 transition duration-300">
-            📞
+          <a
+            href="tel:+916375477987"
+            className="flex items-center justify-center w-14 h-14 bg-blue-500 text-white rounded-full shadow-lg hover:bg-blue-600 transition duration-300"
+          >
+            <FaPhoneAlt size={26} />
           </a>
         </div>
 
+        {/* WhatsApp Icon - Right Side */}
         <div className="fixed bottom-5 right-5 z-50">
-          <a href="https://wa.link/hk9jgm" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center w-14 h-14 bg-green-500 text-white rounded-full shadow-lg hover:bg-green-600 transition duration-300">
-            💬
+          <a
+            href="https://wa.link/hk9jgm"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center w-14 h-14 bg-green-500 text-white rounded-full shadow-lg hover:bg-green-600 transition duration-300"
+          >
+            <FaWhatsapp size={26} />
           </a>
         </div>
 
