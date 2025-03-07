@@ -148,14 +148,14 @@ export const serviceDetails = {
           "Performing a test run and user guidance.",
         ],
       },
-      service: {
-        cost: 299,
-        details: [
-          "Cleaning and checking internal circuits.",
-          "Ensuring proper display and audio functionality.",
-          "Fixing minor connectivity issues.",
-        ],
-      },
+      // service: {
+      //   cost: 299,
+      //   details: [
+      //     "Cleaning and checking internal circuits.",
+      //     "Ensuring proper display and audio functionality.",
+      //     "Fixing minor connectivity issues.",
+      //   ],
+      // },
       repair: {
         cost: 299,
         details: [
