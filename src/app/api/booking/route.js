@@ -8,6 +8,11 @@ export async function POST(req) {
     await connectDB();
     let body = await req.json();
 
+    // Ensure serviceType is always an array
+    if (body.serviceType && !Array.isArray(body.serviceType)) {
+      body.serviceType = [body.serviceType]; // Convert single service to array
+    }
+
     // Fix appointmentDate format before saving
     if (body.appointmentDate) {
       body.appointmentDate = new Date(body.appointmentDate);

@@ -7,7 +7,7 @@ export default function BookingPage() {
     name: "",
     phone: "",
     email: "",
-    serviceType: "AC Repair",
+    serviceType: [], // Multiple services will be stored in an array
     appointmentDate: "",
     appointmentTime: "",
     problemDescription: "",
@@ -24,15 +24,22 @@ export default function BookingPage() {
   const [message, setMessage] = useState("");
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
 
-    // Check if the field is part of address
-    if (["houseNumber", "street", "pincode"].includes(name)) {
+    if (name === "serviceType") {
+      // Handle multiple services selection using checkboxes
+      setFormData((prevData) => ({
+        ...prevData,
+        serviceType: checked
+          ? [...prevData.serviceType, value] // Add service if checked
+          : prevData.serviceType.filter((service) => service !== value), // Remove service if unchecked
+      }));
+    } else if (["houseNumber", "street", "pincode"].includes(name)) {
       setFormData({
         ...formData,
         address: {
-          ...formData.address, // Keep previous address fields
-          [name]: value, // Update only the specific field
+          ...formData.address,
+          [name]: value,
         },
       });
     } else {
@@ -48,7 +55,7 @@ export default function BookingPage() {
 
     const finalData = {
       ...formData,
-      appointmentDate: formattedDate, // Fixing the date format
+      appointmentDate: formattedDate,
     };
 
     try {
@@ -81,7 +88,7 @@ export default function BookingPage() {
       </h2>
 
       <div className="space-y-4 sm:space-y-5">
-        {/* Personal Details Grid */}
+        {/* Personal Details */}
         <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
           <div className="space-y-1">
             <label className="text-xs sm:text-sm font-medium text-gray-600">Full Name</label>
@@ -91,7 +98,7 @@ export default function BookingPage() {
               required
               value={formData.name}
               onChange={handleChange}
-              className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+              className="w-full px-3 sm:px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
@@ -103,28 +110,32 @@ export default function BookingPage() {
               required
               value={formData.phone}
               onChange={handleChange}
-              className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+              className="w-full px-3 sm:px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>
         </div>
 
-        {/* Service Selection */}
+        {/* Multi-Select Service Type */}
         <div className="space-y-1">
-          <label className="text-xs sm:text-sm font-medium text-gray-600">Service Type</label>
-          <select
-            name="serviceType"
-            value={formData.serviceType}
-            onChange={handleChange}
-            className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition"
-          >
-            <option>AC Repair</option>
-            <option>Refrigerator Repair</option>
-            <option>Washing Machine Repair</option>
-            <option>TV & Appliances</option>
-          </select>
+          <label className="text-xs sm:text-sm font-medium text-gray-600">Select Services</label>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            {["AC Repair", "Refrigerator Repair", "Washing Machine Repair", "TV & Appliances", "Plumbing", "Electrical Repair"].map((service) => (
+              <label key={service} className="flex items-center space-x-2 text-sm">
+                <input
+                  type="checkbox"
+                  name="serviceType"
+                  value={service}
+                  checked={formData.serviceType.includes(service)}
+                  onChange={handleChange}
+                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                />
+                <span>{service}</span>
+              </label>
+            ))}
+          </div>
         </div>
 
-        {/* Date/Time Grid */}
+        {/* Date & Time */}
         <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
           <div className="space-y-1">
             <label className="text-xs sm:text-sm font-medium text-gray-600">Preferred Date</label>
@@ -134,7 +145,7 @@ export default function BookingPage() {
               required
               value={formData.appointmentDate}
               onChange={handleChange}
-              className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 sm:px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
@@ -146,85 +157,64 @@ export default function BookingPage() {
               required
               value={formData.appointmentTime}
               onChange={handleChange}
-              className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 sm:px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>
         </div>
 
-        {/* Address Section */}
+        {/* Address */}
         <div className="space-y-3 sm:space-y-4 p-3 sm:p-4 bg-gray-50 rounded-lg sm:rounded-xl">
           <h3 className="text-sm sm:text-base font-semibold text-gray-700">Service Address</h3>
           
           <div className="grid sm:grid-cols-2 gap-2 sm:gap-3">
-            <div className="space-y-1">
-              <label className="text-xs sm:text-sm font-medium text-gray-600">House No.</label>
-              <input
-                type="text"
-                name="houseNumber"
-                placeholder="123"
-                required
-                value={formData.address.houseNumber}
-                onChange={handleChange}
-                className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-xs sm:text-sm font-medium text-gray-600">Street</label>
-              <input
-                type="text"
-                name="street"
-                placeholder="Main Street"
-                required
-                value={formData.address.street}
-                onChange={handleChange}
-                className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-xs sm:text-sm font-medium text-gray-600">City</label>
-              <input
-                type="text"
-                name="city"
-                value="Jaipur"
-                disabled
-                className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-200 rounded-lg bg-gray-100"
-              />
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-xs sm:text-sm font-medium text-gray-600">Pincode</label>
-              <input
-                type="text"
-                name="pincode"
-                placeholder="302001"
-                required
-                value={formData.address.pincode}
-                onChange={handleChange}
-                className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
+            <input
+              type="text"
+              name="houseNumber"
+              placeholder="House No."
+              required
+              value={formData.address.houseNumber}
+              onChange={handleChange}
+              className="w-full px-3 sm:px-4 py-2 border border-gray-200 rounded-lg"
+            />
+            <input
+              type="text"
+              name="street"
+              placeholder="Street"
+              required
+              value={formData.address.street}
+              onChange={handleChange}
+              className="w-full px-3 sm:px-4 py-2 border border-gray-200 rounded-lg"
+            />
+            <input
+              type="text"
+              name="city"
+              value="Jaipur"
+              disabled
+              className="w-full px-3 sm:px-4 py-2 border border-gray-200 rounded-lg bg-gray-100"
+            />
+            <input
+              type="text"
+              name="pincode"
+              placeholder="Pincode"
+              required
+              value={formData.address.pincode}
+              onChange={handleChange}
+              className="w-full px-3 sm:px-4 py-2 border border-gray-200 rounded-lg"
+            />
           </div>
         </div>
 
-        {/* Submit Button */}
+        {/* Submit */}
         <button
           type="submit"
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm sm:text-base font-semibold py-2.5 sm:py-3 px-4 rounded-lg transition-all duration-200 hover:scale-[1.02]"
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg transition hover:scale-105"
         >
           Confirm Booking
         </button>
 
         {/* Status Message */}
         {message && (
-          <div
-            className={`mt-4 sm:mt-5 p-3 text-sm sm:text-base rounded-lg text-center ${
-              message.includes("wrong") 
-                ? "bg-red-100 text-red-700"
-                : "bg-green-100 text-green-700"
-            }`}
-          >
+          <div className={`mt-4 p-3 rounded-lg text-center ${message.includes("wrong") ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"}`}>
             {message}
           </div>
         )}

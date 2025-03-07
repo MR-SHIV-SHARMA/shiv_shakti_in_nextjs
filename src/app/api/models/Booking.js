@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const BookingSchema = new mongoose.Schema({
   name: { type: String, required: true },
   phone: { type: String, required: true },
-  serviceType: { type: String, required: true },
+  serviceType: { type: [String], required: true },
   appointmentDate: { type: Date, required: true },
   appointmentTime: { type: String, required: true },
   address: {
