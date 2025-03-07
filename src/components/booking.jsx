@@ -21,6 +21,8 @@ export default function BookingPage() {
     paymentMethod: "Cash on Service",
   });
 
+  const [message, setMessage] = useState("");
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -56,11 +58,16 @@ export default function BookingPage() {
         body: JSON.stringify(finalData),
       });
 
+      const contentType = res.headers.get("content-type");
+
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error("Server did not return JSON!");
+      }
+
       const result = await res.json();
-      console.log("Server Response:", result);
-      alert(result.message);
+      setMessage(result.message || "Booking Successful!");
     } catch (error) {
-      console.error("Error:", error);
+      setMessage("Something went wrong! Please try again.");
     }
   };
 
@@ -166,6 +173,19 @@ export default function BookingPage() {
       >
         Submit Booking
       </button>
+
+      {/* ✅ API Response Message Show Karna */}
+      {message && (
+        <p
+          className={`mt-4 text-center p-2 rounded ${
+            message.includes("wrong")
+              ? "bg-red-500 text-white"
+              : "bg-green-500 text-white"
+          }`}
+        >
+          {message}
+        </p>
+      )}
     </form>
   );
 }
