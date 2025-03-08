@@ -9,6 +9,8 @@ import {
   FiMapPin,
   FiHome,
   FiNavigation,
+  FiChevronDown,
+  FiX,
 } from "react-icons/fi";
 
 export default function BookingPage() {
@@ -119,6 +121,46 @@ export default function BookingPage() {
     }
   };
 
+  const handleSelectService = (event) => {
+    const selectedService = serviceList.find(
+      (service) => service.name === event.target.value
+    );
+
+    if (selectedService) {
+      const isAlreadySelected = formData.serviceType.some(
+        (s) => s.name === selectedService.name
+      );
+
+      if (!isAlreadySelected) {
+        const updatedServices = [...formData.serviceType, selectedService];
+
+        setFormData((prevData) => ({
+          ...prevData,
+          serviceType: updatedServices,
+          totalCost: updatedServices.reduce(
+            (sum, service) => sum + service.price,
+            0
+          ),
+        }));
+      }
+    }
+  };
+
+  const handleRemoveService = (serviceName) => {
+    const updatedServices = formData.serviceType.filter(
+      (s) => s.name !== serviceName
+    );
+
+    setFormData((prevData) => ({
+      ...prevData,
+      serviceType: updatedServices,
+      totalCost: updatedServices.reduce(
+        (sum, service) => sum + service.price,
+        0
+      ),
+    }));
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 sm:p-6 lg:p-8">
       <form
@@ -126,7 +168,7 @@ export default function BookingPage() {
         className="max-w-3xl mx-auto bg-white rounded-2xl shadow-sm"
       >
         {/* Header */}
-        <div className="bg-blue-600 text-white px-6 py-8 rounded-t-2xl">
+        <div className="bg-blue-600 text-white px-6 py-8 sm:rounded-t-2xl">
           <h1 className="text-3xl font-bold mb-2">Book Home Service</h1>
           <p className="opacity-95">
             Quick & reliable service at your doorstep
@@ -174,51 +216,76 @@ export default function BookingPage() {
 
           {/* Services Section */}
           <section className="space-y-6">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="p-2 bg-blue-100 rounded-lg text-blue-600">
+            {/* Section Header */}
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 bg-blue-100 rounded-lg text-blue-600 shrink-0">
                 <FiCheckCircle className="w-5 h-5" />
               </div>
-              <h2 className="text-xl font-semibold">Select Services</h2>
+              <h2 className="text-xl font-semibold text-gray-800">
+                Select Services
+              </h2>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {serviceList.map((service) => (
-                <label
+            {/* Service Selection */}
+            <div className="relative">
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+                <FiChevronDown className="w-5 h-5" />
+              </div>
+              <select
+                className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl 
+        focus:outline-none focus:border-blue-500 appearance-none
+        bg-white text-gray-700 text-sm sm:text-base"
+                onChange={handleSelectService}
+                value=""
+              >
+                <option value="" disabled>
+                  Select a service
+                </option>
+                {serviceList.map((service) => (
+                  <option key={service.name} value={service.name}>
+                    {service.name} - ₹{service.price}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Selected Services Grid */}
+            <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-2 mt-4">
+              {formData.serviceType.map((service) => (
+                <div
                   key={service.name}
-                  className={`relative flex items-center p-4 rounded-xl border-2 transition-all ${
-                    formData.serviceType.some((s) => s.name === service.name)
-                      ? "border-blue-500 bg-blue-50"
-                      : "border-gray-200 hover:border-blue-300"
-                  }`}
+                  className="relative flex items-center p-3 pr-8 rounded-lg 
+          border-2 border-blue-100 bg-blue-50 hover:border-blue-200
+          transition-colors duration-200"
                 >
-                  <input
-                    type="checkbox"
-                    name="serviceType"
-                    value={service.name}
-                    checked={formData.serviceType.some(
-                      (s) => s.name === service.name
-                    )}
-                    onChange={handleChange}
-                    className="absolute opacity-0"
-                  />
                   <div className="flex-1">
-                    <div className="font-medium text-gray-900">
+                    <div className="text-sm font-medium text-gray-900 truncate">
                       {service.name}
                     </div>
-                    <div className="text-sm text-blue-600">
+                    <div className="text-xs text-blue-600 font-semibold">
                       ₹{service.price}
                     </div>
                   </div>
-                  <FiCheckCircle
-                    className={`ml-2 ${
-                      formData.serviceType.some((s) => s.name === service.name)
-                        ? "text-blue-500 visible"
-                        : "invisible"
-                    }`}
-                  />
-                </label>
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveService(service.name)}
+                    className="absolute right-2 top-1/2 -translate-y-1/2
+            text-gray-400 hover:text-red-500 transition-colors
+            p-1 rounded-full hover:bg-gray-100"
+                    aria-label="Remove service"
+                  >
+                    <FiX className="w-4 h-4" />
+                  </button>
+                </div>
               ))}
             </div>
+
+            {/* Helper Text */}
+            {formData.serviceType.length === 0 && (
+              <p className="text-sm text-gray-500 mt-2">
+                Select services from the dropdown above
+              </p>
+            )}
           </section>
 
           {/* Schedule Section */}

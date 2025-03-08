@@ -82,6 +82,7 @@ export default function Navbar() {
                 <li key={item} className="w-full text-center">
                   <Link
                     href={itemPath}
+                    onClick={() => setIsOpen(false)}
                     className={`block px-6 py-3 rounded-lg text-lg transition duration-300 ease-in-out ${
                       isActive
                         ? "bg-gray-700 text-white shadow-md"
