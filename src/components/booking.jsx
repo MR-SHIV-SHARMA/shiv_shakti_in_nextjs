@@ -321,25 +321,25 @@ export default function BookingPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="relative">
-                <FiClock className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                {/* <FiClock className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5 pointer-events-none" /> */}
                 <input
                   type="date"
                   name="appointmentDate"
                   value={formData.appointmentDate}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-700 bg-white appearance-none min-h-[48px] text-base"
                   required
                 />
               </div>
 
               <div className="relative">
-                <FiClock className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                {/* <FiClock className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5 pointer-events-none" /> */}
                 <input
                   type="time"
                   name="appointmentTime"
                   value={formData.appointmentTime}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-700 bg-white appearance-none min-h-[48px] text-base"
                   required
                 />
               </div>
