@@ -135,7 +135,7 @@ const ServiceDetail = () => {
 
                   <ul className="text-left mb-6 space-y-2">
                     {value.features?.map((feature, i) => (
-                      <li key={i} className="flex items-center text-gray-600">
+                      <li key={feature} className="flex items-center text-gray-600">
                         <svg
                           className="w-5 h-5 text-green-500 mr-2"
                           fill="currentColor"

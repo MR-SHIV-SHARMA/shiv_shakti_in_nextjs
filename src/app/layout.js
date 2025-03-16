@@ -5,8 +5,8 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { FaPhoneAlt, FaWhatsapp } from "react-icons/fa";
 import QueryProvider from "@/components/QueryProvider";
+import Head from "next/head";
 
-// ✅ Google Fonts को Next.js के तरीके से लोड करें
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -20,24 +20,17 @@ const geistMono = Geist_Mono({
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      {/* ✅ Google Fonts और Meta Tags सही तरीके से डालें */}
-      <head>
-        <title>
-          Shiv Shakti Home Appliance Services - Repair & Installation Services
-        </title>
-        <meta
-          name="description"
-          content="Get professional & affordable AC repair services in Jaipur. Certified experts, same-day service, and 24/7 support available. Call now!"
-        />
-        <meta
-          name="keywords"
-          content="AC repair Jaipur, AC service Jaipur, AC maintenance, air conditioner repair"
-        />
+      <Head>
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="https://www.shivshaktiss.in/" />
+        <meta name="geo.region" content="IN-RJ" />
+        <meta name="geo.placename" content="Jaipur" />
+        <meta name="geo.position" content="26.9124;75.7873" />
         <link
           href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap"
           rel="stylesheet"
         />
-      </head>
+      </Head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
