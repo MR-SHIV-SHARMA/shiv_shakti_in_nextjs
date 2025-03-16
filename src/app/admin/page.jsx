@@ -1,12 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AdminPanel from "./AdminPanel";
 
 export default function ProtectedAdmin() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+
+  // Check authentication status on page load
+  useEffect(() => {
+    const authStatus = localStorage.getItem("isAdminAuthenticated");
+    if (authStatus === "true") {
+      setIsAuthenticated(true);
+    }
+  }, []);
 
   const handleLogin = async () => {
     try {
@@ -20,6 +28,7 @@ export default function ProtectedAdmin() {
 
       if (data.success) {
         setIsAuthenticated(true);
+        localStorage.setItem("isAdminAuthenticated", "true"); // Save in localStorage
       } else {
         setErrorMessage(data.message);
       }
