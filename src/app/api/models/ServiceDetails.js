@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 
 const PriceSchema = new mongoose.Schema({
-  cost: { type: Number, required: true },
-  details: { type: [String], required: true },
+  cost: { type: Number, default: 0 },
+  details: { type: [String], default: [] },
 });
 
 const ServiceSchema = new mongoose.Schema({
@@ -11,8 +11,8 @@ const ServiceSchema = new mongoose.Schema({
   description: { type: String, required: true },
   price: {
     type: Map,
-    of: PriceSchema, // Allows both single & multiple pricing types
-    required: true,
+    of: PriceSchema,
+    default: {},
   },
   icon: { type: String, required: true },
 });

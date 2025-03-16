@@ -1,7 +1,7 @@
 import { connectDB } from "@/app/api/lib/db";
 import Service from "@/app/api/models/ServiceDetails";
 
-// ✅ GET Method - सभी Services प्राप्त करें
+// ✅ GET Method
 export async function GET() {
   try {
     await connectDB();
@@ -15,7 +15,7 @@ export async function GET() {
   }
 }
 
-// ✅ POST Method - नई Service जोड़ें
+// ✅ POST Method
 export async function POST(req) {
   try {
     await connectDB();
@@ -28,7 +28,21 @@ export async function POST(req) {
       );
     }
 
-    const newService = new Service({ name, title, description, price, icon });
+    const defaultPrice = {
+      installation: { cost: 0, details: [] },
+      service: { cost: 0, details: [] },
+      repair: { cost: 0, details: [] },
+    };
+
+    const finalPrice = { ...defaultPrice, ...price };
+
+    const newService = new Service({
+      name,
+      title,
+      description,
+      price: finalPrice,
+      icon,
+    });
     await newService.save();
 
     return Response.json(
@@ -47,7 +61,7 @@ export async function POST(req) {
   }
 }
 
-// ✅ PATCH Method - किसी एक Service को Update करें
+// ✅ PATCH Method
 export async function PATCH(req) {
   try {
     await connectDB();
@@ -61,8 +75,8 @@ export async function PATCH(req) {
     }
 
     const updatedService = await Service.findByIdAndUpdate(id, updates, {
-      new: true, // अपडेट के बाद नया डेटा वापस भेजेगा
-      runValidators: true, // वैलिडेशन को ऑन रखेगा
+      new: true,
+      runValidators: true,
     });
 
     if (!updatedService) {
@@ -88,7 +102,7 @@ export async function PATCH(req) {
   }
 }
 
-// ✅ DELETE Method - किसी एक Service को Delete करें
+// ✅ DELETE Method
 export async function DELETE(req) {
   try {
     await connectDB();
