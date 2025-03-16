@@ -1,11 +1,11 @@
+import { NextResponse } from "next/server";
+
 export async function GET() {
-    return new Response(
-      `User-agent: *
-  Allow: /
-  Disallow: /admin
-  Disallow: /login
-  Sitemap: https://www.shivshaktiss.in/sitemap.xml`,
-      { headers: { "Content-Type": "text/plain" } }
-    );
-  }
-  
+  const robots = `User-agent: *
+Allow: /
+Sitemap: https://www.shivshaktiss.in/sitemap.xml`;
+
+  return new NextResponse(robots, {
+    headers: { "Content-Type": "text/plain" },
+  });
+}
