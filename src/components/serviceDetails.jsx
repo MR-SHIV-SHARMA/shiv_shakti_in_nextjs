@@ -135,7 +135,10 @@ const ServiceDetail = () => {
 
                   <ul className="text-left mb-6 space-y-2">
                     {value.features?.map((feature, i) => (
-                      <li key={feature} className="flex items-center text-gray-600">
+                      <li
+                        key={feature}
+                        className="flex items-center text-gray-600"
+                      >
                         <svg
                           className="w-5 h-5 text-green-500 mr-2"
                           fill="currentColor"
@@ -169,12 +172,6 @@ const ServiceDetail = () => {
             )}
           </div>
         </section>
-
-        <div className="fixed bottom-0 left-0 right-0 bg-white shadow-2xl p-4 sm:hidden z-50 border-t border-gray-200">
-          <button className="w-full bg-green-600 text-white py-4 rounded-lg font-bold text-lg shadow-lg hover:bg-green-700 transition duration-300">
-            Book Service Now
-          </button>
-        </div>
       </div>
     </motion.div>
   );
