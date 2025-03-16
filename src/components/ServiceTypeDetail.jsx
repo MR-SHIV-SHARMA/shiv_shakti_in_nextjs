@@ -1,79 +1,102 @@
 "use client";
 import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import axios from "axios";
 import { motion } from "framer-motion";
-import { serviceDetails } from "./serviceDetails";
 
 const containerVariants = {
-  hidden: { opacity: 0 },
+  hidden: { opacity: 0, y: 20 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.1 },
+    y: 0,
+    transition: { duration: 0.5, staggerChildren: 0.2 },
   },
 };
 
 const itemVariants = {
-  hidden: { y: 20, opacity: 0 },
-  visible: {
-    y: 0,
-    opacity: 1,
-    transition: { type: "spring", stiffness: 120 },
-  },
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
 };
 
 const ServiceTypeDetail = () => {
-  const router = useRouter();
   const { serviceId, serviceType } = useParams();
-  const service = serviceDetails?.[serviceId];
+  const [service, setService] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [serviceName, setServiceName] = useState("");
+  const router = useRouter(); // ✅ Define router
 
-  if (!service) {
+  useEffect(() => {
+    if (!serviceId || !serviceType) {
+      setError("Invalid Service ID or Type");
+      setLoading(false);
+      return;
+    }
+
+    const fetchService = async () => {
+      try {
+        const { data } = await axios.get(`/api/services`);
+
+        if (!data.success) {
+          throw new Error("API Error: Service not found");
+        }
+
+        const foundService = data.data.find((s) => s._id === serviceId);
+
+        if (!foundService) {
+          throw new Error("Service Not Found");
+        }
+
+        let matchedServiceType = null;
+        let matchedServiceName = serviceType;
+
+        if (foundService.price[serviceType]) {
+          matchedServiceType = foundService.price[serviceType];
+          matchedServiceName = serviceType;
+        } else {
+          for (const key in foundService.price) {
+            if (foundService.price[key]._id === serviceType) {
+              matchedServiceType = foundService.price[key];
+              matchedServiceName = key;
+              break;
+            }
+          }
+        }
+
+        if (!matchedServiceType) {
+          throw new Error("Service Type Not Found");
+        }
+
+        setService(matchedServiceType);
+        setServiceName(matchedServiceName);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchService();
+  }, [serviceId, serviceType]);
+
+  if (loading) {
     return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="min-h-screen flex flex-col items-center justify-center p-6"
-      >
-        <div className="text-center space-y-6 max-w-2xl">
-          <div className="text-6xl">❌</div>
-          <h2 className="text-2xl md:text-3xl font-bold text-red-600">
-            Service Not Found
-          </h2>
-          <button
-            onClick={() => router.back()}
-            className="bg-blue-600 text-white px-8 py-3 rounded-lg
-            hover:bg-blue-700 transition-all duration-300 transform hover:scale-105"
-          >
-            Return to Services
-          </button>
-        </div>
-      </motion.div>
+      <div className="min-h-screen flex items-center justify-center text-gray-600">
+        Loading service details...
+      </div>
     );
   }
 
-  const serviceData = service.price?.[serviceType];
-
-  if (!serviceData) {
+  if (error || !service) {
     return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="min-h-screen flex flex-col items-center justify-center p-6"
-      >
-        <div className="text-center space-y-6 max-w-2xl">
-          <div className="text-6xl">⚠️</div>
-          <h2 className="text-2xl md:text-3xl font-bold text-amber-600">
-            Service Type Not Available
-          </h2>
-          <button
-            onClick={() => router.push(`/service/${serviceId}`)}
-            className="bg-blue-600 text-white px-8 py-3 rounded-lg
-            hover:bg-blue-700 transition-all duration-300 transform hover:scale-105"
-          >
-            View Available Packages
-          </button>
-        </div>
-      </motion.div>
+      <div className="min-h-screen flex items-center justify-center text-red-600">
+        {error || "Service not found"}
+      </div>
     );
   }
+
+  const formattedServiceName =
+    serviceName.charAt(0).toUpperCase() + serviceName.slice(1);
 
   return (
     <motion.div
@@ -105,54 +128,30 @@ const ServiceTypeDetail = () => {
 
       {/* Main Content */}
       <div className="max-w-4xl w-full space-y-8">
-        {/* Icon & Title Section */}
         <motion.div variants={itemVariants} className="space-y-6">
-          <div className="flex justify-center">
-            <motion.div
-              whileHover={{ rotate: 15 }}
-              className="flex items-center justify-center w-20 h-20 md:w-24 md:h-24 
-              bg-white rounded-full shadow-lg border-2 border-gray-200"
-            >
-              {service.icon}
-            </motion.div>
-          </div>
-
           <h1 className="text-3xl md:text-4xl font-extrabold text-gray-800">
-            {service.title}
-            <span className="block mt-2 text-2xl md:text-3xl text-blue-600">
-              {serviceType.replace(/-/g, " ")}
-            </span>
+            {formattedServiceName}
           </h1>
         </motion.div>
 
-        {/* Description & Price */}
         <motion.div variants={itemVariants} className="space-y-6">
-          <p className="text-lg md:text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto">
-            {service.description}
-          </p>
-
           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
             <h2 className="text-2xl md:text-3xl font-bold text-green-600">
               <span className="text-gray-500">Starting from</span>
-              <br />₹{serviceData.cost}
-              <span className="block text-lg text-gray-500 mt-2">
-                {serviceData.duration && `for ${serviceData.duration}`}
-              </span>
+              <br />₹{service.cost}
             </h2>
           </div>
         </motion.div>
 
-        {/* Features List */}
         <motion.ul
           variants={containerVariants}
           className="grid gap-4 text-left"
         >
-          {serviceData.details.map((detail, index) => (
+          {service.details.map((detail, index) => (
             <motion.li
               key={index}
               variants={itemVariants}
-              className="p-4 bg-white rounded-lg shadow-sm border border-gray-200
-              hover:shadow-md transition-shadow duration-200"
+              className="p-4 bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200"
             >
               <div className="flex items-start space-x-3">
                 <svg
@@ -173,55 +172,6 @@ const ServiceTypeDetail = () => {
             </motion.li>
           ))}
         </motion.ul>
-
-        {/* Action Buttons */}
-        <motion.div
-          variants={itemVariants}
-          className="flex flex-col sm:flex-row gap-4 justify-center pt-8"
-        >
-          <button
-            className="flex-1 bg-green-500 text-white py-4 px-8 rounded-xl font-semibold
-            hover:bg-green-600 focus:ring-4 focus:ring-green-300 transition-all duration-300
-            shadow-lg hover:shadow-xl text-lg md:text-xl flex items-center justify-center gap-2"
-          >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-              />
-            </svg>
-            Book Now
-          </button>
-
-          <button
-            onClick={() => router.push(`/service/${serviceId}`)}
-            className="flex-1 bg-gray-100 text-gray-700 py-4 px-8 rounded-xl font-semibold
-            hover:bg-gray-200 focus:ring-4 focus:ring-gray-300 transition-all duration-300
-            shadow-lg hover:shadow-xl text-lg md:text-xl flex items-center justify-center gap-2"
-          >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            View Other Packages
-          </button>
-        </motion.div>
       </div>
     </motion.div>
   );
