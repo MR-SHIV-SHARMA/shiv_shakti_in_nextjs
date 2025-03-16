@@ -96,11 +96,15 @@ export default function BookingPage() {
     }
   };
 
+  const [isSubmitting, setIsSubmitting] = useState(false); // New State for Button Disable
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (isSubmitting) return; // Prevent multiple clicks
+
     if (!formData.name || !formData.phone) {
-      setMessage("Please fill in your name, phone.");
+      setMessage("Please fill in your name and phone.");
       return;
     }
 
@@ -123,13 +127,16 @@ export default function BookingPage() {
       return;
     }
 
+    setIsSubmitting(true); // Disable button while submitting
+
     const parsedDate = new Date(formData.appointmentDate);
     if (isNaN(parsedDate.getTime())) {
       setMessage("Invalid appointment date.");
+      setIsSubmitting(false);
       return;
     }
 
-    const formattedDate = parsedDate.toISOString(); // Safe conversion
+    const formattedDate = parsedDate.toISOString();
 
     try {
       const { data } = await axios.post("/api/booking", {
@@ -138,9 +145,20 @@ export default function BookingPage() {
       });
 
       setMessage(data.message || "Booking Successful!");
+      setFormData({
+        name: "",
+        phone: "",
+        serviceType: [],
+        appointmentDate: "",
+        appointmentTime: "",
+        address: { houseNumber: "", street: "", city: "Jaipur", pincode: "" },
+        totalCost: 0,
+      });
     } catch (error) {
       setMessage("Something went wrong! Please try again.");
     }
+
+    setIsSubmitting(false); // Enable button again after request
   };
 
   const handleSelectService = (event) => {
@@ -419,9 +437,15 @@ export default function BookingPage() {
                 </div>
                 <button
                   type="submit"
-                  className="w-full sm:w-auto px-8 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+                  disabled={isSubmitting} // Disable button when submitting
+                  className={`w-full sm:w-auto px-8 py-3 rounded-lg font-medium transition-colors 
+  ${
+    isSubmitting
+      ? "bg-gray-400 cursor-not-allowed"
+      : "bg-blue-600 text-white hover:bg-blue-700"
+  }`}
                 >
-                  Confirm Booking
+                  {isSubmitting ? "Processing..." : "Confirm Booking"}
                 </button>
               </div>
             </div>
