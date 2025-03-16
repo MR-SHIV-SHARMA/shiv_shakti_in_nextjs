@@ -71,11 +71,6 @@ const ServiceDetail = () => {
         <Link href="/" className="hover:text-blue-600">
           Home
         </Link>{" "}
-        /
-        <Link href="/services" className="hover:text-blue-600">
-          {" "}
-          Services
-        </Link>{" "}
         /<span className="font-semibold text-gray-800"> {service.title}</span>
       </nav>
 
