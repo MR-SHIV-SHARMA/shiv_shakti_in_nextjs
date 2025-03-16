@@ -2,13 +2,10 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   const robots = `User-agent: *
-  Disallow: /admin
-  Allow: /
-  Sitemap: https://www.shivshaktiss.in/sitemap.xml`;
+Allow: /
+Sitemap: https://www.shivshaktiss.in/sitemap.xml`;
 
   return new NextResponse(robots, {
-    headers: {
-      "Content-Type": "text/plain",
-    },
+    headers: { "Content-Type": "text/plain" },
   });
 }
