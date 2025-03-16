@@ -1,10 +1,12 @@
+"use client";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { FaPhoneAlt, FaWhatsapp } from "react-icons/fa";
-import QueryProvider from "@/components/QueryProvider"; // ✅ Import QueryProvider
+import QueryProvider from "@/components/QueryProvider";
 
+// ✅ Google Fonts को Next.js के तरीके से लोड करें
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -15,33 +17,27 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata = {
-  title:
-    "Shiv Shakti Home Appliance Services - Repair & Installation Services in Jaipur | 24/7 Expert Support",
-  description:
-    "Get professional & affordable AC repair services in Jaipur. Certified experts, same-day service, and 24/7 support available. Call now!",
-  keywords:
-    "AC repair Jaipur, AC service Jaipur, AC maintenance, air conditioner repair",
-  openGraph: {
-    title: "Best AC Repair & Services in Jaipur",
-    description:
-      "Need quick AC repair? Get expert services in Jaipur with same-day support.",
-    url: "https://yourwebsite.com/",
-    images: ["https://yourwebsite.com/og-image.jpg"],
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Best AC Repair & Services in Jaipur",
-    description:
-      "Get expert AC repair services with same-day support. Contact now!",
-    images: ["https://yourwebsite.com/og-image.jpg"],
-  },
-};
-
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
+      {/* ✅ Google Fonts और Meta Tags सही तरीके से डालें */}
+      <head>
+        <title>
+          Shiv Shakti Home Appliance Services - Repair & Installation Services
+        </title>
+        <meta
+          name="description"
+          content="Get professional & affordable AC repair services in Jaipur. Certified experts, same-day service, and 24/7 support available. Call now!"
+        />
+        <meta
+          name="keywords"
+          content="AC repair Jaipur, AC service Jaipur, AC maintenance, air conditioner repair"
+        />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
