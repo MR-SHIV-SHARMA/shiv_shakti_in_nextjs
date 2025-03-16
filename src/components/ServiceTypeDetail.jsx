@@ -3,6 +3,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 const containerVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -172,6 +173,12 @@ const ServiceTypeDetail = () => {
             </motion.li>
           ))}
         </motion.ul>
+        <Link
+          href={`/booking`}
+          className="flex-1 bg-green-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-green-700 transition duration-300"
+        >
+          Book Now
+        </Link>
       </div>
     </motion.div>
   );
