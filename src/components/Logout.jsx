@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import ServicesDetailsAdmin from "@/components/ServicesDetailsAdmin";
 
 export default function Logout() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -28,9 +29,10 @@ export default function Logout() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-600 to-blue-500 flex items-center justify-center p-4">
-        <div className="w-full max-w-md bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-xl animate-fade-in-up">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-600 to-blue-500 p-4">
+        <div className="max-w-md w-full bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-xl animate-fade-in-up">
           <div className="flex flex-col items-center space-y-6">
+            {/* Admin Icon */}
             <div className="bg-blue-100 p-4 rounded-full">
               <svg
                 className="w-12 h-12 text-blue-600"
@@ -46,15 +48,20 @@ export default function Logout() {
                 />
               </svg>
             </div>
+
+            {/* Title */}
             <h2 className="text-3xl font-bold text-gray-800 text-center">
               Admin Portal
             </h2>
+
+            {/* Login Button */}
             <button
               onClick={handleLogin}
               className="w-full py-4 px-6 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-xl transform transition-all duration-300 hover:scale-105 hover:shadow-lg active:scale-95"
             >
               Secure Login
             </button>
+
             <p className="text-sm text-gray-500 text-center mt-4">
               You'll be granted administrator privileges
             </p>
@@ -65,29 +72,37 @@ export default function Logout() {
   }
 
   return (
-    <div className="md:p-4 flex justify-end">
-      <button
-        onClick={handleLogout}
-        className={`flex items-center space-x-2 px-6 py-3 bg-red-500/90 hover:bg-red-600 text-white rounded-lg transition-all duration-300 ${
-          isLoggingOut ? "opacity-50 cursor-not-allowed" : ""
-        }`}
-        disabled={isLoggingOut}
-      >
-        <svg
-          className="w-5 h-5"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
+    <div className="relative">
+      {/* 🔹 Logout Button - Fixed at Top Right */}
+      <div className="absolute top-2 right-2">
+        <button
+          onClick={handleLogout}
+          className={`flex items-center space-x-2 px-6 py-3 bg-red-500/90 hover:bg-red-600 text-white rounded-lg transition-all duration-300 ${
+            isLoggingOut ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+          disabled={isLoggingOut}
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-          />
-        </svg>
-        <span>{isLoggingOut ? "Logging Out..." : "Logout"}</span>
-      </button>
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+            />
+          </svg>
+          <span>{isLoggingOut ? "Logging Out..." : "Logout"}</span>
+        </button>
+      </div>
+
+      {/* 🔹 Full-Width Services Panel */}
+      <div className="w-full">
+        <ServicesDetailsAdmin />
+      </div>
     </div>
   );
 }
