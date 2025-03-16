@@ -1,9 +1,9 @@
 "use client";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 import axios from "axios";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
 
 const containerVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -19,68 +19,53 @@ const itemVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
 };
 
+const fetchService = async () => {
+  const { data } = await axios.get(`/api/services`);
+  if (!data.success) {
+    throw new Error("API Error: Service not found");
+  }
+  return data.data;
+};
+
 const ServiceTypeDetail = () => {
   const { serviceId, serviceType } = useParams();
-  const [service, setService] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [serviceName, setServiceName] = useState("");
   const router = useRouter(); // ✅ Define router
 
-  useEffect(() => {
-    if (!serviceId || !serviceType) {
-      setError("Invalid Service ID or Type");
-      setLoading(false);
-      return;
-    }
+  // ✅ React Query से Data Fetch कर रहे हैं
+  const {
+    data: services,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["services"],
+    queryFn: fetchService,
+    staleTime: 10 * 60 * 1000, // 10 मिनट तक data fresh रहेगा
+    cacheTime: 30 * 60 * 1000, // 30 मिनट तक cache में रहेगा
+  });
 
-    const fetchService = async () => {
-      try {
-        const { data } = await axios.get(`/api/services`);
+  // ✅ Data Processing Logic
+  let service = null;
+  let serviceName = serviceType;
 
-        if (!data.success) {
-          throw new Error("API Error: Service not found");
-        }
+  if (!isLoading && services) {
+    const foundService = services.find((s) => s._id === serviceId);
 
-        const foundService = data.data.find((s) => s._id === serviceId);
-
-        if (!foundService) {
-          throw new Error("Service Not Found");
-        }
-
-        let matchedServiceType = null;
-        let matchedServiceName = serviceType;
-
-        if (foundService.price[serviceType]) {
-          matchedServiceType = foundService.price[serviceType];
-          matchedServiceName = serviceType;
-        } else {
-          for (const key in foundService.price) {
-            if (foundService.price[key]._id === serviceType) {
-              matchedServiceType = foundService.price[key];
-              matchedServiceName = key;
-              break;
-            }
+    if (foundService) {
+      if (foundService.price[serviceType]) {
+        service = foundService.price[serviceType];
+      } else {
+        for (const key in foundService.price) {
+          if (foundService.price[key]._id === serviceType) {
+            service = foundService.price[key];
+            serviceName = key;
+            break;
           }
         }
-
-        if (!matchedServiceType) {
-          throw new Error("Service Type Not Found");
-        }
-
-        setService(matchedServiceType);
-        setServiceName(matchedServiceName);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
       }
-    };
+    }
+  }
 
-    fetchService();
-  }, [serviceId, serviceType]);
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center text-gray-600">
         Loading service details...
@@ -91,7 +76,7 @@ const ServiceTypeDetail = () => {
   if (error || !service) {
     return (
       <div className="min-h-screen flex items-center justify-center text-red-600">
-        {error || "Service not found"}
+        {error?.message || "Service not found"}
       </div>
     );
   }

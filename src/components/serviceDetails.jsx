@@ -3,43 +3,39 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query"; // ✅ React Query import
 import { FaTv } from "react-icons/fa";
 import { TbAirConditioning } from "react-icons/tb";
 import { CgSmartHomeRefrigerator } from "react-icons/cg";
 import { GiWashingMachine } from "react-icons/gi";
 
+const fetchServices = async () => {
+  const response = await axios.get(`/api/services`);
+  return response.data.success ? response.data.data : [];
+};
+
 const ServiceDetail = () => {
   const { serviceId } = useParams();
-  const [service, setService] = useState(null);
-  const [loading, setLoading] = useState(true);
 
-  // 📌 1. API से सर्विस डेटा लाने का फ़ंक्शन (GET)
-  const fetchService = async () => {
-    try {
-      const response = await axios.get(`/api/services`);
-      if (response.data.success) {
-        const foundService = response.data.data.find(
-          (s) => s._id === serviceId
-        );
-        setService(foundService || null);
-      }
-    } catch (error) {
-      console.error("Error fetching service:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // ✅ useQuery का उपयोग API कॉल के लिए
+  const {
+    data: services,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["services"],
+    queryFn: fetchServices,
+    staleTime: 10 * 60 * 1000, // 10 मिनट तक fresh data रहेगा
+    cacheTime: 30 * 60 * 1000, // 30 मिनट तक cache में रहेगा
+  });
 
-  useEffect(() => {
-    fetchService();
-  }, [serviceId]);
+  const service = services?.find((s) => s._id === serviceId);
 
-  if (loading) {
+  if (isLoading) {
     return <p className="text-center py-10">Loading...</p>;
   }
 
-  if (!service) {
+  if (error || !service) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4">
         <motion.div
