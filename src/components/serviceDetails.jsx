@@ -159,9 +159,12 @@ const ServiceDetail = () => {
                     >
                       View Details
                     </Link>
-                    <button className="flex-1 bg-green-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-green-700 transition duration-300">
+                    <Link
+                      href={`/booking`}
+                      className="flex-1 bg-green-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-green-700 transition duration-300"
+                    >
                       Book Now
-                    </button>
+                    </Link>
                   </div>
                 </motion.div>
               ))
