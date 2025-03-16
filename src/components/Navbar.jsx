@@ -16,7 +16,7 @@ export default function Navbar() {
     setIsOpen(false);
   }, [pathname]);
 
-  const menuItems = ["Home", "Services", "Booking"];
+  const menuItems = ["Home", "Services", "Booking", "About"];
 
   return (
     <nav className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white shadow-md sticky top-0 left-0 w-full z-50">
