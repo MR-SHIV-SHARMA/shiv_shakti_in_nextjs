@@ -6,6 +6,7 @@ import {
   FiClock,
   FiCheckCircle,
   FiXCircle,
+  FiShare2,
 } from "react-icons/fi";
 
 export default function Admin() {
@@ -124,6 +125,30 @@ export default function Admin() {
 
   const categorizedBookings = categorizeBookings();
 
+  // WhatsApp Share Function
+  const shareOnWhatsApp = (booking) => {
+    const message = `
+  📅 *New Booking Details*
+  👤 *Name:* ${booking.name}
+  📞 *Phone:* ${booking.phone}
+  🛠 *Services:* 
+  ${booking.serviceType.map((s) => `  - ${s.name} - ₹${s.price}`).join("\n")}
+  📍 *Address:* ${booking.address?.houseNumber}, ${booking.address?.street}, ${
+      booking.address?.city
+    } - ${booking.address?.pincode}
+  🕒 *Date & Time:* ${new Date(
+    booking.appointmentDate
+  ).toLocaleDateString()} - ${booking.appointmentTime}
+  💰 *Total Cost:* ₹${booking.totalCost}
+  📌 *Status:* ${booking.status}
+    `.trim();
+
+    const whatsappURL = `https://api.whatsapp.com/send?text=${encodeURIComponent(
+      message
+    )}`;
+    window.open(whatsappURL, "_blank");
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
@@ -167,6 +192,7 @@ export default function Admin() {
                             "Location",
                             "Status",
                             "Total",
+                            "Share",
                             "Actions",
                           ].map((header) => (
                             <th
@@ -250,6 +276,14 @@ export default function Admin() {
                             </td>
                             <td className="px-4 py-3 font-semibold text-gray-900">
                               ₹{booking.totalCost}
+                            </td>
+                            <td className="px-4 py-3">
+                              <button
+                                onClick={() => shareOnWhatsApp(booking)}
+                                className="text-green-600 hover:text-green-800 p-2 rounded-lg hover:bg-green-50"
+                              >
+                                <FiShare2 className="w-5 h-5" />
+                              </button>
                             </td>
                             <td className="px-4 py-3">
                               <button
