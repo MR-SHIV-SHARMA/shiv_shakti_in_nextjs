@@ -387,6 +387,12 @@ export default function Admin() {
                                 <option value="Cancelled">Cancelled</option>
                               </select>
                               <button
+                                onClick={() => shareOnWhatsApp(booking)}
+                                className="text-green-600 hover:text-green-800 p-2 rounded-lg hover:bg-green-50"
+                              >
+                                <FiShare2 className="w-5 h-5" />
+                              </button>
+                              <button
                                 onClick={() => deleteBooking(booking._id)}
                                 className="text-red-600 hover:text-red-800 p-1"
                               >
