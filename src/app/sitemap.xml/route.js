@@ -10,19 +10,20 @@ export async function GET() {
     { path: "/service/ac-repair", priority: "0.6" },
     { path: "/service/refrigerator-repair", priority: "0.6" },
     { path: "/service/washing-machine-repair", priority: "0.6" },
-    { path: "/service/geyser-repair", priority: "0.6" },
+    { path: "/service/geyser-repair", priority: "0.6" }
   ];
 
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
   <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     ${pages
       .map(
-        (page) =>
-          `<url>
-            <loc>https://www.shivshaktiss.in${page.path}</loc>
-            <changefreq>weekly</changefreq>
-            <priority>${page.priority}</priority>
-          </url>`
+        (page) => `
+      <url>
+        <loc>https://www.shivshaktiss.in${page.path}</loc>
+        <changefreq>weekly</changefreq>
+        <priority>${page.priority}</priority>
+      </url>
+    `
       )
       .join("")}
   </urlset>`;
