@@ -9,13 +9,27 @@ const nextConfig = {
           { key: "X-Frame-Options", value: "SAMEORIGIN" },
           {
             key: "Content-Security-Policy",
-            value:
-              "default-src 'self'; img-src *; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';",
+            value: [
+              "default-src 'self';",
+              "img-src * data: blob:;",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval';",
+              "style-src 'self' 'unsafe-inline';",
+              "font-src 'self' data:;",
+              "connect-src 'self' https://api.example.com;",
+              "frame-ancestors 'none';"
+            ].join(" "),
           },
         ],
       },
     ];
   },
+
+  experimental: {
+    metadataRoutes: true, // Sitemap और अन्य metadata routes के लिए जरूरी
+  },
+
+  reactStrictMode: true, // React Strict Mode Enable करें
+  swcMinify: true, // SWC Minifier का इस्तेमाल करें
 };
 
 export default nextConfig;
