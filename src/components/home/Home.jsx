@@ -106,7 +106,7 @@ export default function Home() {
               <Link
                 key={service._id}
                 href={`/service/${service._id}`}
-                className="relative border-2 border-black p-2 block transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-lg active:scale-95 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 group"
+                className="relative border-2 border-black p-2 block transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-lg active:scale-95 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 focus:ring-offset-blue-500 group"
                 aria-label={`View ${service.name} service`}
               >
                 <span className="absolute top-0 left-4 sm:left-12 right-4 sm:right-12 h-[6px] bg-black rounded-br-2xl rounded-bl-2xl transition-all duration-300 group-hover:w-[90%] group-hover:left-[5%]" />
