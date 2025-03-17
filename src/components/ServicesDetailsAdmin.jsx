@@ -15,9 +15,13 @@ export default function ServicesPage() {
     icon: "",
   });
   const [editingService, setEditingService] = useState(null);
-  const [isOpen, setIsOpen] = useState(false); // Toggle state
+  const [isOpen, setIsOpen] = useState(false);
 
   // 📌 Fetch Services (GET)
+  useEffect(() => {
+    fetchServices();
+  }, []);
+
   const fetchServices = async () => {
     try {
       const response = await axios.get("/api/services");
@@ -28,10 +32,6 @@ export default function ServicesPage() {
       console.error("Error fetching services:", error);
     }
   };
-
-  useEffect(() => {
-    fetchServices();
-  }, []);
 
   // 📌 Add Service (POST)
   const addService = async () => {
@@ -154,8 +154,8 @@ export default function ServicesPage() {
             />
 
             {/* Price Fields */}
-            {["installation", "service", "repair"].map((category) => (
-              <div key={category} className="mb-2 p-2 border rounded">
+            {["installation", "service", "repair"].map((category, index) => (
+              <div key={index} className="mb-2 p-2 border rounded">
                 <p className="font-semibold capitalize">{category} Price</p>
                 <input
                   type="number"
@@ -167,7 +167,11 @@ export default function ServicesPage() {
                 />
                 <textarea
                   name={`price.${category}.details`}
-                  value={form.price?.[category]?.details?.join("\n") || ""}
+                  value={
+                    Array.isArray(form.price?.[category]?.details)
+                      ? form.price[category].details.join("\n")
+                      : ""
+                  }
                   onChange={handleChange}
                   placeholder={`${category} Details (one per line)`}
                   className="border p-2 w-full"
@@ -208,9 +212,9 @@ export default function ServicesPage() {
               <p>No services available</p>
             ) : (
               <ul>
-                {services.map((service) => (
+                {services.map((service, index) => (
                   <li
-                    key={service._id}
+                    key={service._id || index}
                     className="border p-2 flex justify-between items-center"
                   >
                     <div>
@@ -229,8 +233,8 @@ export default function ServicesPage() {
                               {key} - ₹{value.cost}
                             </p>
                             <ul className="text-gray-500 text-sm list-disc pl-5">
-                              {value.details.map((detail, index) => (
-                                <li key={index}>{detail}</li>
+                              {value.details.map((detail, i) => (
+                                <li key={i}>{detail}</li>
                               ))}
                             </ul>
                           </div>

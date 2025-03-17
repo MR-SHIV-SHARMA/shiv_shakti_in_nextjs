@@ -41,13 +41,13 @@ export default function Navbar() {
 
         {/* Desktop Menu */}
         <ul className="hidden md:flex space-x-6 text-lg">
-          {menuItems.map((item) => {
+          {menuItems.map((item, index) => {
             const itemPath =
               item.toLowerCase() === "home" ? "/" : `/${item.toLowerCase()}`;
             const isActive = pathname === itemPath;
 
             return (
-              <li key={item}>
+              <li key={index}>
                 <Link
                   href={itemPath}
                   className={`px-3 py-2 rounded-lg transition duration-300 ease-in-out font-medium ${
@@ -73,13 +73,13 @@ export default function Navbar() {
             exit={{ opacity: 0, y: -10 }}
             className="md:hidden flex flex-col items-center bg-gray-800 py-4 space-y-3 shadow-lg rounded-b-lg"
           >
-            {menuItems.map((item) => {
+            {menuItems.map((item, index) => {
               const itemPath =
                 item.toLowerCase() === "home" ? "/" : `/${item.toLowerCase()}`;
               const isActive = pathname === itemPath;
 
               return (
-                <li key={item} className="w-full text-center">
+                <li key={index} className="w-full text-center">
                   <Link
                     href={itemPath}
                     onClick={() => setIsOpen(false)}
