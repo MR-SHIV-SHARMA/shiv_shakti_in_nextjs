@@ -55,7 +55,7 @@ const SectionHeader = ({ title, subtitle }) => (
 
 export default function WhyChooseUs() {
   return (
-    <div className="overflow-hidden">
+    <div>
       <Head>
         <title>Best AC Repair & Service in Jaipur | 24/7 Support</title>
         <meta

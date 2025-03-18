@@ -8,6 +8,7 @@ import { GiWashingMachine } from "react-icons/gi";
 import Link from "next/link";
 import Head from "next/head";
 import WhyChooseUs from "@/components/home/WhyChooseUs";
+import Image from "next/image";
 
 // ✅ API fetch function (react-query इसे manage करेगा)
 const fetchServices = async () => {
@@ -51,9 +52,10 @@ export default function Home() {
           <div className="w-1/2 sm:w-auto flex justify-center px-4 mr-4">
             <div className="border-4 border-yellow-500 rounded-lg p-2">
               <img
-                src="/logo.jpeg"
+                src="/logo.webp"
                 alt="Shiv Shakti Home Appliance Services Logo"
-                className="w-24 sm:w-32 h-24 sm:h-32"
+                className="w-24 sm:w-32 h-auto aspect-[669/631] object-contain"
+                loading="lazy"
               />
             </div>
           </div>
@@ -75,14 +77,18 @@ export default function Home() {
         <div className="flex justify-end items-end w-[100%] sm:w-[75%] right-0 mt-6 bg-yellow-500 rounded-tl-full overflow-hidden relative ml-auto">
           <div className="w-full h-full bg-yellow-500">
             <img
-              src="/b.png"
+              src="/b.webp"
               alt="Shiv Shakti Appliance Repair Service"
-              className="w-[80%] h-full sm:hidden ml-auto"
+              className="max-w-full h-auto sm:hidden"
+              loading="lazy"
             />
-            <img
-              src="/1.png"
+            <Image
+              src="/1.webp"
               alt="Expert Home Appliance Repair Technicians"
+              width={800}
+              height={600}
               className="w-full h-full object-cover hidden sm:block"
+              loading="lazy"
             />
           </div>
         </div>
@@ -101,7 +107,7 @@ export default function Home() {
             <p className="text-red-600 font-semibold text-lg col-span-2 md:col-span-3">
               {error.message || "Failed to load services. Please try again."}
             </p>
-          ) : services.length > 0 ? (
+          ) : services?.length > 0 ? (
             services.map((service) => (
               <Link
                 key={service._id}
@@ -140,8 +146,9 @@ export default function Home() {
                   ) && (
                     <img
                       src={service.icon}
-                      alt={service.name}
+                      alt={`Icon representing ${service.name}`}
                       className="w-16 sm:w-32 h-16 sm:h-32 mx-auto mt-4"
+                      loading="lazy"
                     />
                   )}
                 </div>

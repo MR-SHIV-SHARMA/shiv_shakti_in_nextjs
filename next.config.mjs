@@ -1,5 +1,22 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  reactStrictMode: true,
+
+  experimental: {
+    optimizeCss: true, // Optimize CSS delivery
+  },
+
+  images: {
+    unoptimized: true, // Disable automatic Next.js image optimization
+  },
+
+  webpack: (config) => {
+    config.optimization.splitChunks = {
+      chunks: "all", // Enable code splitting
+    };
+    return config;
+  },
+
   async headers() {
     return [
       {
@@ -15,11 +32,6 @@ const nextConfig = {
         ],
       },
     ];
-  },
-
-  reactStrictMode: true,
-  images: {
-    unoptimized: true,
   },
 };
 
